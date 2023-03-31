@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-class PayButton extends StatelessWidget {
-  const PayButton({super.key, required this.callback});
+class AppButton extends StatelessWidget {
+  const AppButton({super.key, required this.onPressed, required this.label});
 
-  final VoidCallback callback;
+  final VoidCallback onPressed;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +22,13 @@ class PayButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0)),
             ),
-            onPressed: callback,
+            onPressed: onPressed,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
-                  'Fund Wallet',
-                  style: TextStyle(
+                  label,
+                  style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),

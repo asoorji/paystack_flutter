@@ -4,20 +4,22 @@ import 'package:flutter_paystack/flutter_paystack.dart';
 
 import 'button.dart';
 
-class PaystackCardMethod extends StatefulWidget {
-  const PaystackCardMethod({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _PaystackCardMethodState createState() => _PaystackCardMethodState();
+  _HomeState createState() => _HomeState();
 }
 
-class _PaystackCardMethodState extends State<PaystackCardMethod> {
+class _HomeState extends State<Home> {
   String publicKeyTest =
       'pk_test_275daca48185414ab86aa2f485fc635b55d93ea0'; //pass in the public test key here
   final plugin = PaystackPlugin();
-  var balance = 0;
-  var amt = 100;
+  dynamic balance = 0;
+
+  TextEditingController amountController = TextEditingController();
+
   @override
   void initState() {
     plugin.initialize(publicKey: publicKeyTest);
@@ -36,9 +38,9 @@ class _PaystackCardMethodState extends State<PaystackCardMethod> {
   }
 
   chargeCard() async {
+    dynamic amt = int.parse(amountController.text);
     var charge = Charge()
-      ..amount = amt *
-          100 //the money should be in kobo hence the need to multiply the value by 100
+      ..amount = amt * 100
       ..reference = _getReference()
       ..putCustomField('custom_id',
           '846gey6w') //to pass extra parameters to be retrieved on the response from Paystack
@@ -85,8 +87,11 @@ class _PaystackCardMethodState extends State<PaystackCardMethod> {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   padding: const EdgeInsets.all(15),
-                  child: PayButton(
-                    callback: () => chargeCard(),
+                  child: AppButton(
+                    onPressed: () {
+                      showBottomSheet(context);
+                    },
+                    label: 'Fund Wallet',
                   ),
                 ),
               )),
@@ -97,7 +102,65 @@ class _PaystackCardMethodState extends State<PaystackCardMethod> {
 
   void updateWallet() {
     setState(() {
-      balance += amt;
+      balance += int.parse(amountController.text);
     });
+  }
+
+  void showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          child: SizedBox(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "Fund Wallet",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.cancel,
+                      ),
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Amount',
+                  ),
+                  controller: amountController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter an amount';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                AppButton(
+                  onPressed: () {
+                    chargeCard();
+                  },
+                  label: 'Proceed',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
