@@ -32,16 +32,15 @@ String _getReference() {
   }
 chargeCard() async {
     var charge = Charge()
-      ..amount = 300 *
+      ..amount = 150 *
           100 //the money should be in kobo hence the need to multiply the value by 100
       ..reference = _getReference()
-      ..accessCode = '12345'
       ..putCustomField('custom_id',
           '846gey6w') //to pass extra parameters to be retrieved on the response from Paystack
       ..email = 'ndubuisiaso@gmail.com';
 CheckoutResponse response = await plugin.checkout(
       context,
-      method: CheckoutMethod.selectable,
+      method: CheckoutMethod.card,
       charge: charge,
     );
 if (response.status == true) {
