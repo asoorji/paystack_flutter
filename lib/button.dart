@@ -26,7 +26,7 @@ class PayButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
                 Text(
-                  'Pay Now!!!',
+                  'Fund Wallet',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
